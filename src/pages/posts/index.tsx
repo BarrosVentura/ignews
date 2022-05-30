@@ -3,7 +3,18 @@ import Head from "next/head";
 import { createClient } from "../../services/prismic";
 import styles from "./styles.module.scss";
 
-export default function Posts() {
+type Post = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  updatedAt: string;
+};
+
+interface PostsProps {
+  posts: Post[];
+}
+
+export default function Posts({ posts }: PostsProps) {
   return (
     <>
       <Head>
@@ -12,30 +23,13 @@ export default function Posts() {
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="">
-            <time>12 de Março de 2021</time>
-            <strong>Creating a Mororepo with Lerna & Yarn Workspaces</strong>
-            <p>
-              In this guide, you will learn how to create a Monorepo to manage
-              multiple packages with a shared
-            </p>
-          </a>
-          <a href="">
-            <time>12 de Março de 2021</time>
-            <strong>Creating a Mororepo wih Lerna & Yarn Workspaces</strong>
-            <p>
-              In this guide, you will learn how to create a Monorepo to manage
-              multiple packages with a shared
-            </p>
-          </a>
-          <a href="">
-            <time>12 de Março de 2021</time>
-            <strong>Creating a Mororepo with Lerna & Yarn Workspaces</strong>
-            <p>
-              In this guide, you will learn how to create a Monorepo to manage
-              multiple packages with a shared
-            </p>
-          </a>
+          {posts.map((post) => (
+            <a key={post.slug} href="">
+              <time>{post.updatedAt}</time>
+              <strong>{post.title}</strong>
+              <p>{post.excerpt}</p>
+            </a>
+          ))}
         </div>
       </main>
     </>
@@ -49,9 +43,25 @@ export const getStaticProps: GetStaticProps = async () => {
     fetch: ["data.title", "data.content"],
   });
 
-  console.log(page);
+  const posts = page.map((item) => {
+    return {
+      slug: item.uid,
+      title: item.data.title,
+      excerpt:
+        item.data.content.find((content) => content.type === "paragraph")
+          ?.text ?? "",
+      updatedAt: new Date(item.last_publication_date).toLocaleDateString(
+        "pt-BR",
+        {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }
+      ),
+    };
+  });
 
   return {
-    props: { page },
+    props: { posts },
   };
 };
