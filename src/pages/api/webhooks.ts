@@ -3,7 +3,7 @@ import { Stripe } from "stripe";
 import { NextApiResponse } from "next";
 import { NextApiRequest } from "next";
 import { Readable } from "stream";
-import saveSubscription from "./_lib/manageSubscripton";
+import saveSubscription from "./_lib/manageSubscription";
 
 async function buffer(readable: Readable) {
   const chunks = [];
