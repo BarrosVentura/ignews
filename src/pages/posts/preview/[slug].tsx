@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { createClient } from "../../../services/prismic";
 
-import styles from "./post.module.scss";
+import styles from "../post.module.scss";
 
 interface PreviewProps {
   post: {
